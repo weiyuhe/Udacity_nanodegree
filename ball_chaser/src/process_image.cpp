@@ -27,6 +27,7 @@ void process_image_callback(const sensor_msgs::Image img)
     int imgHeight = img.height;
     int imgWidth = img.width;
     int pixel = 0;
+    bool found = false;
 
 
 /*# This message contains an uncompressed image
@@ -64,11 +65,12 @@ uint8[] data          # actual matrix data, size is (step * rows)  */
 
     //find location of the white pixels
     int curr_pixel = 0;
-    for(int i =0; i< imgHeight; i++){
-        for(int j = 0; j < imgStep; j++){
+    for(int i =0; i< imgHeight && !found; i++){
+        for(int j = 0; j < imgStep && !found; j++){
             pixel = i*imgStep + j;
             if(img.data[pixel] == white_pixel){
                 curr_pixel = j/3;
+                found = true;
                 break;
             }
 
@@ -79,21 +81,25 @@ uint8[] data          # actual matrix data, size is (step * rows)  */
     float x = 0.0;
     float beta = 0.0;
 
-    if(curr_pixel < imgWidth/3){ 
+    if(curr_pixel < imgWidth/3 && found){ 
         x = 0.2;
         beta = 0.2;
         ROS_INFO("Left");
 
-    }else if(curr_pixel >= imgWidth/3 && curr_pixel < 2*imgWidth/3){
+    }else if(curr_pixel >= imgWidth/3 && curr_pixel < 2*imgWidth/3 && found){
         x = 0.4;
         beta = 0.0;
         ROS_INFO("Mid");
 
-    }else { //curr_pixel >= 2*imgWidth/3
+    }else if(curr_pixel >= 2*imgWidth/3 && found ){ //curr_pixel >= 2*imgWidth/3
         x = 0.2;
         beta = -0.2;
         ROS_INFO("Right");
 
+    }else{
+        x = 0.0;
+        beta = 0.0;
+        ROS_INFO("Not Found");
     }
 
     drive_robot(x,beta);
