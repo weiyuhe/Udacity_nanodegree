@@ -26,7 +26,7 @@ void process_image_callback(const sensor_msgs::Image img)
     int imgStep = img.step;
     int imgHeight = img.height;
     int imgWidth = img.width;
-    int pixel = 0;
+    int image_data = 0;
     bool found = false;
 
 
@@ -67,8 +67,8 @@ uint8[] data          # actual matrix data, size is (step * rows)  */
     int curr_pixel = 0;
     for(int i =0; i< imgHeight && !found; i++){
         for(int j = 0; j < imgStep && !found; j++){
-            pixel = i*imgStep + j;
-            if(img.data[pixel] == white_pixel){
+            image_data = i*imgStep + j;
+            if(img.data[image_data] == white_pixel && img.data[image_data+1] == white_pixel &&img.data[image_data+2] == white_pixel){
                 curr_pixel = j/3;
                 found = true;
                 break;
