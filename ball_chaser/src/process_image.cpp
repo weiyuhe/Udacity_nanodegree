@@ -66,7 +66,7 @@ uint8[] data          # actual matrix data, size is (step * rows)  */
     //find location of the white pixels
     int curr_pixel = 0;
     for(int i =0; i< imgHeight && !found; i++){
-        for(int j = 0; j < imgStep && !found; j++){
+        for(int j = 0; j < imgStep && !found; j+=3){
             image_data = i*imgStep + j;
             if(img.data[image_data] == white_pixel && img.data[image_data+1] == white_pixel &&img.data[image_data+2] == white_pixel){
                 curr_pixel = j/3;
